@@ -30,6 +30,15 @@ Launch =time-zones= with:
 
 * Install
 
+** From MELPA
+
+#+begin_src emacs-lisp :lexical no
+  (use-package time-zones
+    :ensure t)
+#+end_src
+
+** From source
+
 #+begin_src emacs-lisp :lexical no
   (use-package time-zones
     :vc (:url "https://github.com/xenodium/time-zones"))
