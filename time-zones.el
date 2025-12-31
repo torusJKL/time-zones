@@ -645,40 +645,47 @@ and MAX-OFFSET-WIDTH."
              (propertize "?" 'face 'help-key-binding)
              " help")))
     (insert title)
-    (when time-zones--city-list
-      (let* ((sorted-cities (funcall time-zones-sorting-function
-                                     time-zones--city-list local-time))
-             (max-location-width
-              (apply #'max
-                     (mapcar (lambda (city)
-                               (let* ((city-name (map-elt city 'city))
-                                      (state (map-elt city 'state))
-                                      (timezone (map-elt city 'timezone))
-                                      (location (or city-name state timezone)))
-                                 (length location)))
-                             sorted-cities)))
-             (max-date-width
-              (apply #'max
-                     (mapcar (lambda (city)
-                               (length (format-time-string "%A %d %B" local-time (map-elt city 'timezone))))
-                             sorted-cities)))
-             (max-abbreviation-width
-              (apply #'max
-                     (mapcar (lambda (city)
-                               (length (time-zones--format-tz-abbreviation local-time (map-elt city 'timezone))))
-                             sorted-cities)))
-             (max-offset-width
-              (if time-zones-show-details
-                  (apply #'max
-                         (mapcar (lambda (city)
-                                   (length (time-zones--format-utc-or-home-offset local-time (map-elt city 'timezone))))
-                                 sorted-cities))
-                0)))
-        (dolist (city sorted-cities)
-          (insert (time-zones--format-city city local-time max-location-width
-                                           max-date-width max-abbreviation-width max-offset-width)))))
-    (unless (seq-empty-p time-zones--city-list)
-      (insert "\n"))
+    (if time-zones--city-list
+        (let* ((sorted-cities (funcall time-zones-sorting-function
+                                       time-zones--city-list local-time))
+               (max-location-width
+                (apply #'max
+                       (mapcar (lambda (city)
+                                 (let* ((city-name (map-elt city 'city))
+                                        (state (map-elt city 'state))
+                                        (timezone (map-elt city 'timezone))
+                                        (location (or city-name state timezone)))
+                                   (length location)))
+                               sorted-cities)))
+               (max-date-width
+                (apply #'max
+                       (mapcar (lambda (city)
+                                 (length (format-time-string "%A %d %B" local-time (map-elt city 'timezone))))
+                               sorted-cities)))
+               (max-abbreviation-width
+                (apply #'max
+                       (mapcar (lambda (city)
+                                 (length (time-zones--format-tz-abbreviation local-time (map-elt city 'timezone))))
+                               sorted-cities)))
+               (max-offset-width
+                (if time-zones-show-details
+                    (apply #'max
+                           (mapcar (lambda (city)
+                                     (length (time-zones--format-utc-or-home-offset local-time (map-elt city 'timezone))))
+                                   sorted-cities))
+                  0)))
+          (dolist (city sorted-cities)
+            (insert (time-zones--format-city city local-time max-location-width
+                                             max-date-width max-abbreviation-width max-offset-width)))
+          (insert "\n"))
+      ;; Display message when no time zones are configured
+      (insert "  Press "
+              (propertize (key-description
+                           (where-is-internal 'time-zones-add-city
+                                              time-zones-mode-map t))
+                          'face 'help-key-binding)
+              " to add a city time zone"
+              "\n\n"))
     (if time-zones-show-help
         (progn
           (insert "  "
