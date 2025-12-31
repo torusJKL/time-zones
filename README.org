@@ -44,6 +44,14 @@ Launch =time-zones= with:
     :vc (:url "https://github.com/xenodium/time-zones"))
 #+end_src
 
+** Customization
+
+The default sort order is chronologically ascending, so time zones in "the past" occur earlier in the list than time zones in "the future". You can select chronologically descending sorting via:
+
+#+begin_src emacs-lisp :lexical no
+  (setq time-zones-sorting-function 'time-zones-sort-descending)
+#+end_src
+
 * Run
 
 #+begin_src
